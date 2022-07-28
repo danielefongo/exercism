@@ -1,0 +1,52 @@
+use std::cmp;
+
+pub fn annotate(minefield: &[&str]) -> Vec<String> {
+    minefield
+        .iter()
+        .enumerate()
+        .map(|(row_idx, row)| {
+            row.as_bytes()
+                .iter()
+                .enumerate()
+                .map(|(col_idx, it)| {
+                    let row_min = cmp::max(0 as i32, row_idx as i32 - 1);
+                    let row_max = cmp::min(minefield.len() as i32 - 1, row_idx as i32 + 1);
+                    let col_min = cmp::max(0 as i32, col_idx as i32 - 1);
+                    let col_max = cmp::min(row.len() as i32 - 1, col_idx as i32 + 1);
+
+                    (-1..1).for_each(|idx| {
+                        (-1..1)
+                            .for_each(|idy| {
+                                println!("{} {}", idx, idy);
+                            })
+                    });
+                    println!("{} {}", row_idx, col_idx);
+                    let pippo = minefield
+                        .iter()
+                        .skip(row_min.try_into().unwrap())
+                        .take((row_max - row_min).try_into().unwrap())
+                        .fold(0, |acc, it| {
+                            acc + it
+                                .as_bytes()
+                                .iter()
+                                .skip(col_min.try_into().unwrap())
+                                .take((col_max - col_min).try_into().unwrap())
+                                .fold(acc, |inner_acc, it| {
+                                    println!("--->{} {}", *it as char, it);
+                                    if *it == 32 {
+                                        inner_acc + 1
+                                    } else {
+                                        inner_acc
+                                    }
+                                })
+                        });
+                    println!("count: {}", pippo);
+                    ()
+                })
+                .collect::<Vec<()>>();
+
+            ()
+        })
+        .collect::<Vec<()>>();
+    unimplemented!("\nAnnotate each square of the given minefield with the number of mines that surround said square (blank if there are no surrounding mines):\n{:#?}\n", minefield);
+}
